@@ -45,11 +45,11 @@ public abstract class AbstractGridHandler<T extends ITileEntityLink> implements 
                             Class clazz = field.getAnnotation(GridInformation.class).value();
                             if (clazz == type){
                                 if (!field.getType().isAssignableFrom(type)){
-                                    throw new IllegalArgumentException();
+                                    throw new IllegalArgumentException(String.format("Field %s of type %s failed isAssignable to %s", field, field.getType(), type));
                                 }
                                 Object o = add ? object.getInformation() : null;
                                 if (o != null && !type.isAssignableFrom(o.getClass())){
-                                    throw new IllegalArgumentException();
+                                    throw new IllegalArgumentException(String.format("Type %s failed isAssignable to %s of type %s", type, o, o.getClass()));
                                 }
                                 try {
                                     field.setAccessible(true);
@@ -89,7 +89,7 @@ public abstract class AbstractGridHandler<T extends ITileEntityLink> implements 
                 return;
             } else {
                 if (!o.getPosition().isLoaded()){
-                    throw new IllegalStateException(); //Something has gone terribly wrong somewhere...
+                    throw new IllegalStateException(String.format("Positiion %s is not loaded! Object: %s TileEntity: %s", o.getPosition(), o, tile)); //Something has gone terribly wrong somewhere...
                 }
                 if (o.hasChanged()){
                     changeCheck.add(dimCoord);
@@ -173,7 +173,7 @@ public abstract class AbstractGridHandler<T extends ITileEntityLink> implements 
             T o = getObject(dimCoord);
             if (o != null){
                 if (oldUpdates.contains(dimCoord)) {
-                    throw new IllegalStateException();
+                    throw new IllegalStateException(String.format("Some chunkcheck failed! Instance: %s %s Position: %s Object: %s TileEntity: %s oldUpdates: %s add: %s changeCheck: %s updates: %s dimCoord: %s", this, this.getClass().getName(), o.getPosition(), o, tile, oldUpdates, add, changeCheck, updates, dimCoord));
                 }
             } else {
                 o = createNewObject(tile);
